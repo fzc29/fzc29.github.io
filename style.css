@@ -21,11 +21,15 @@ h2 {
 }
 
 img {
-    width: 300px; 
-    align-self: center;       
+    width: 300px;       
     height: auto;        
     border-width: 2px;
     border-radius: 5px;   
     border-color: beige;
     border-style: dashed;
+    margin: 0 auto;
+}
+
+.part1-img {
+    margin: 10px;
 }
