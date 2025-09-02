@@ -10,3 +10,12 @@ h1 {
     background-color: #B2D199;
     padding: 40px;
 }
+
+img {
+    width: 400px;        
+    height: auto;        
+    border-width: 2px;
+    border-radius: 5px;   
+    border-color: beige;
+    border-style: dashed;
+}
