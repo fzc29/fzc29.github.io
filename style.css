@@ -21,6 +21,7 @@ h2 {
 }
 
 img {
+    display: block;
     width: 300px;       
     height: auto;        
     border-width: 2px;
@@ -31,5 +32,9 @@ img {
 }
 
 .part1-img {
+    margin: 10px;
+}
+
+.part2-img {
     margin: 10px;
 }
