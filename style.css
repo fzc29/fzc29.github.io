@@ -3,16 +3,26 @@ body {
     background-color: #DAE9C3;
 }
 
-h1, h2 {
+h1 {
     text-align: center;
     font-weight: bold;
-    text-shadow: 2em;
+    font-style: oblique;
+    text-shadow: 4em;
     background-color: #B2D199;
     padding: 40px;
 }
 
+h2 {
+    text-align: center;
+    font-weight: bold;
+    text-shadow: 2em;
+    background-color: #B2D199;
+    padding: 20px;
+}
+
 img {
-    width: 400px;        
+    width: 300px; 
+    align-self: center;       
     height: auto;        
     border-width: 2px;
     border-radius: 5px;   
