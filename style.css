@@ -21,7 +21,6 @@ h2 {
 }
 
 img {
-    display: block;
     width: 300px;       
     height: auto;        
     border-width: 2px;
@@ -32,9 +31,23 @@ img {
 }
 
 .part1-img {
+    text-align: center;
+}
+
+.part1-img img {
+    display: inline-block;
     margin: 10px;
 }
 
 .part2-img {
+    text-align: center;
+}
+
+.part2-img img {
+    display: inline-block;
     margin: 10px;
+}
+
+.part3-gif {
+    text-align: center;
 }
