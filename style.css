@@ -1,37 +1,37 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #DAE9C3;
+    font-family: "Courier New", monospace;
+    background: linear-gradient(#4DA18F, #E2F2D5);
 }
 
 h1 {
     text-align: center;
     font-weight: bold;
     font-style: oblique;
-    text-shadow: 4em;
-    background-color: #B2D199;
+    background: radial-gradient(circle, rgba(50, 98, 138, 0.8), rgba(77, 161, 143, 0.0));
+    color: white;
     padding: 40px;
 }
 
 h2 {
     text-align: center;
     font-weight: bold;
-    text-shadow: 2em;
-    background-color: #B2D199;
+    background: radial-gradient(circle, rgba(242, 218, 229, 0.5), rgba(242, 218, 229, 0.0));
     padding: 20px;
+    margin-bottom: 25px;
 }
 
 img {
     width: 300px;       
     height: auto;        
-    border-width: 2px;
-    border-radius: 5px;   
-    border-color: beige;
+    border-width: 5px;
+    border-color:cadetblue;
     border-style: dashed;
     margin: 0 auto;
 }
 
 .part1-img {
     text-align: center;
+    margin-bottom: 50px;
 }
 
 .part1-img img {
@@ -41,6 +41,7 @@ img {
 
 .part2-img {
     text-align: center;
+    margin-bottom: 50px;
 }
 
 .part2-img img {
@@ -50,4 +51,5 @@ img {
 
 .part3-gif {
     text-align: center;
+    margin-bottom: 50px;
 }
