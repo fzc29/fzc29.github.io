@@ -6,7 +6,7 @@ import skimage.io as skio
 # import opencv as cv 
 
 # name of the input file
-imname = 'proj1_data/cathedral.jpg'
+imname = '1/proj1_data/cathedral.jpg'
 
 # read in the image
 im = skio.imread(imname)
@@ -47,22 +47,41 @@ Image Alignment
 # functions that might be useful for aligning the images include:
 # np.roll, np.sum, sk.transform.rescale (for multiscale)
 
-def align_ncc(ch1, ch2):
-    ch1 = ch1.np.matrix.ravel()
-    ch2 = ch2.np.matrix.ravel()
+def ncc(base, match):
+    # calculating NCC value for 2 matrixes 
+    I = base - np.mean(base)
+    P = match - np.mean(match)
+    numerator = np.sum(I*P)
+    denominator = np.sqrt(np.sum(I**2)) * np.sqrt(np.sum(P**2))
+    return numerator / denominator
 
+def align_ncc(base, match):
+    """
+    using base as reference, match match to base 
+    """
+    x_shift, y_shift = 0, 0
+    best_ncc = 0 
+    row, col = base.shape 
+    # nested loop for rolling x and y 
+    for x in range(0, row//2):
+        for y in range(0, col//2):
+            temp = np.roll(np.roll(match, x, axis=0), y, axis=1)
+            cur_ncc = ncc(base, temp)
+            if cur_ncc > best_ncc:
+                x_shift, y_shift = x, y
+                best_ncc = cur_ncc
 
+    return (x_shift, y_shift)
 
+# b = reference channel 
+ag = align_ncc(b, g)
+g_shifted = np.roll(np.roll(g, ag[0], axis=0), ag[1], axis=1)
 
-    return None
+ar = align_ncc(b, r)
+r_shifted = np.roll(np.roll(r, ar[0], axis=0), ar[1], axis=1)
 
-# b = make reference channel 
-
-### ag = align(g, b)
-### ar = align(r, b)
 # create a color image (stack images on top of each other)
-im_out = np.dstack([ar, ag, b])
-
+im_out = np.dstack([r_shifted, g_shifted, b])
 
 """
 ====================
@@ -70,7 +89,7 @@ Image Display
 ====================
 """
 # save the image
-fname = '/out_path/out_fname.jpg'
+fname = '1/result_data/cathedral_out.jpg'
 skio.imsave(fname, im_out)
 
 # display the image
