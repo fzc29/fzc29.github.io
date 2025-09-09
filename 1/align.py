@@ -6,7 +6,7 @@ import skimage.io as skio
 # import opencv as cv 
 
 # name of the input file
-imname = 'cathedral.jpg'
+imname = 'proj1_data/cathedral.jpg'
 
 # read in the image
 im = skio.imread(imname)
@@ -51,7 +51,7 @@ def align_ncc(ch1, ch2):
     ch1 = ch1.np.matrix.ravel()
     ch2 = ch2.np.matrix.ravel()
 
-    
+
 
 
     return None
