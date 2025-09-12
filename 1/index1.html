@@ -49,7 +49,7 @@
         </p>
         <img src="./final_result/no_align_monastery.jpg" alt="Monastery Not Aligned">
         <p>
-          As mentioned earlier, the misalignment is causing the image to look blurry and have wierd doubles in different colors.
+          As mentioned earlier, the misalignment is causing the image to look blurry and have weird doubles in different colors.
         </p>
 
         <div class="side-by-side">
@@ -127,7 +127,7 @@
         </div>        
 
         <p>          
-          <b>2. Alignment Process: </b> Starting the lowest resolution image, we perform the NCC_align algorithm with a fixed search 
+          <b>2. Initial Alignment: </b> Starting the lowest resolution image, we perform the NCC_align algorithm with a fixed search 
           window. This is the initial rough estimate that we will use to narrow our search. 
 
           <br><br>
@@ -206,7 +206,7 @@
           <p>
             When using the x and y shifts that I got for Emir using the regular NCC_alignment algorithm, I ended up with the image
             displayed on the right. This error occurred because of the brightness difference between the 3 color channels. NCC expects 
-            that bright areas in one channel align with bright areas in a different channel.The three channels had differing/opposing 
+            that bright areas in one channel align with bright areas in a different channel. The three channels had differing/opposing 
             brightness patterns, so the NCC algorithm ended up giving me a negative correlation for the correct alignment. 
           </p>
         </div>
