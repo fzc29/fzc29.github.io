@@ -1,0 +1,169 @@
+cathedral.jpg
+green shift: (2, 1)
+red shift: (3, 8)
+monastery.jpg
+green shift: (2, -3)
+red shift: (2, 3)
+tobolsk.jpg
+green shift: (2, 3)
+red shift: (3, 6)
+
+fixed tifs
+church.tif
+green shift: (4, 24)
+red shift: (-4, 56)
+emir.tif
+green shift: (24, 48)
+red shift: (-284, 114)
+harvesters.tif
+green shift: (16, 60)
+red shift: (12, 122)
+icon.tif
+green shift: (16, 40)
+red shift: (22, 90)
+italil.tif
+green shift: (20, 38)
+red shift: (36, 76)
+lastochikino.tif
+green shift: (-2, -2)
+red shift: (0, 218)
+lugano.tif
+green shift: (-18, 8)
+red shift: (-28, 90)
+melons.tif
+green shift: (8, 82)
+red shift: (12, 178)
+self_portrait.tif
+green shift: (26, 76)
+red shift: (36, 174)
+siren.tif
+green shift: (-6, 50)
+red shift: (-24, 94)
+three_generations.tif
+green shift: (12, 52)
+red shift: (10, 110)
+
+Extra Photos:
+detali_sobora.tif
+green shift: (12, 58)
+red shift: (24, 126)
+locomotive.tif
+green shift: (30, 38)
+red shift: (-164, 292)
+monrepos_park.tif
+green shift: (2, 44)
+red shift: (2, 164)
+village_dagestan.tif
+green shift: (0, 32)
+red shift: (18, -2)
+
+lastochikino.tif
+green shift: (-2, -4)
+red shift: (-8, 76)
+lugano.tif
+green shift: (-18, 40)
+red shift: (-28, 92)
+emir.tif
+green shift: (24, 50)
+red shift: (40, 106)
+
+
+Redo for dimensions (correct values)
+
+Naive Align (low-res)
+cathedral.jpg
+green shift: (2, 1)
+red shift: (3, 8)
+monastery.jpg
+green shift: (2, -3)
+red shift: (2, 3)
+tobolsk.jpg
+green shift: (2, 3)
+red shift: (3, 6)
+
+Pyramid part 1 (high-res) + NO EDGE 
+church.tif
+green shift: (4, 24)
+red shift: (-4, 56)
+
+emir.tif (needs edge)
+green shift: (18, 16)
+red shift: (-284, 114)
+
+harvesters.tif
+green shift: (16, 60)
+red shift: (12, 122)
+
+icon.tif
+green shift: (16, 40)
+red shift: (22, 90)
+
+italil.tif
+green shift: (20, 38)
+red shift: (36, 76)
+
+
+Fixed from part 1 with edge
+emir.tif
+green shift: (24, 50)
+red shift: (40, 106)
+
+Pyramid part 2 (high-res) + NO EDGE 
+lastochikino.tif (needs edge)
+green shift: (-2, -2)
+red shift: (0, 218)
+
+lugano.tif (needs edge)
+green shift: (-18, 8)
+red shift: (-28, 90)
+
+melons.tif
+green shift: (8, 82)
+red shift: (12, 178)
+
+self_portrait.tif
+green shift: (26, 76)
+red shift: (36, 174)
+
+siren.tif
+green shift: (-6, 50)
+red shift: (-24, 94)
+
+three_generations.tif
+green shift: (12, 52)
+red shift: (10, 110)
+
+Fixed from part 2 with edge
+
+lastochikino.tif
+green shift: (-2, -4)
+red shift: (-8, 76)
+
+lugano.tif
+green shift: (-18, 40)
+red shift: (-28, 92)
+
+Extra images with edge
+
+detali_sobora.tif
+green shift: (12, 58)
+red shift: (24, 126)
+
+locomotive.tif
+green shift: (30, 38)
+red shift: (-164, 292)
+
+monrepos_park.tif
+green shift: (2, 44)
+red shift: (2, 164)
+
+village_dagestan.tif
+green shift: (0, 32)
+red shift: (18, -2)
+
+Extra images without edge
+
+village_dagestan.tif
+green shift: (0, 32)
+red shift: (-2, 134)
+
