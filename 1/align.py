@@ -85,7 +85,7 @@ def pyramid_align(base, match, level, edge=False):
     i = 0
 
     while i < level:
-        minimized_base = cv2.resize(base_sizes[0], dsize=None, fx=(1/2), fy=(1/2), interpolation=cv2.INTER_AREA)
+        minimized_base = cv2.resize(base_sizes[0], dsize=None, fx=0.5, fy=0.5, interpolation=cv2.INTER_AREA)
         minimized_match = cv2.resize(match_sizes[0], dsize=None, fx=0.5, fy=0.5, interpolation=cv2.INTER_AREA)
         # base_sizes.append(minimized_base)
         base_sizes.insert(0, minimized_base)
@@ -117,9 +117,9 @@ def sobel(matrix):
                      [1, 2, 1]])
     
     # convolve Image with G_x and G_y
-    #I_x = signal.convolve2d(matrix, G_x, mode='same')
+    
     I_x = cv2.filter2D(src=matrix, ddepth=-1, kernel=G_x)
-    #I_y = signal.convolve2d(matrix, G_y, mode='same')
+    
     I_y = cv2.filter2D(src=matrix, ddepth=-1, kernel=G_y)
 
     out_mat = np.sqrt((I_x**2) + (I_y**2))
