@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Project 1: Images of the Russion Empire</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+  <header>
+    <h1>Project 1: Images of the Russian Empire</h1>
+    <nav>
+      <a href="../index_main.html">Home</a>
+    </nav>
+  </header>
+
+  <main>
+    <section>
+        <h2>OVERVIEW</h2>
+
+        <p>
+          The goal of this project is to take digitized glass plate images from Prokudin-Gorskii’s collection 
+          to reconstruct them into a clean color image. This involves separating the RGB channels and aligning 
+          them correctly to reduce image distortions, to create a single image. 
+        </p>
+
+        <div class="side-by-side">
+            <p>
+                On the right is an example of the glass plate images I will be working with. 
+                The glass plates in the order of BGR. When working with a mixture of low-resolution 
+                images and high-resolution images, I will be using the naive and pyramid solutions respectfully. 
+                <br><br>
+                The first part will focus on the biggest issue which is finding a way to align the 3 plates (RGB)
+                after they are separated since misalignment will cause an overall distorted image. The second part will focus on 
+                applying the alignment strategy to larger images, since most of the collection is in high-resolution <code>.tif</code> format, through 
+                implementing a pyramid scheme, to iteratively align images starting at lower resolutions and then refining upwards till we 
+                reach the full resolution.
+            </p>
+            <img src="./proj1_data/monastery.jpg" alt="Glass plate example" class="no-crop">
+        </div>     
+    </section>
+
+    <section>
+        <h2>Naive Approach</h2>
+
+        <p>
+          Starting from the most basic idea, we can directly split the glass plates into thirds for each of the color channels
+          and then directly stack them on top of each other, giving us the below result. 
+        </p>
+        <img src="./final_result/no_align_monastery.jpg" alt="Monastery Not Aligned">
+        <p>
+          As mentioned earlier, the misalignment is causing the image to look blurry and have wierd doubles in different colors.
+        </p>
+
+        <div class="side-by-side">
+            <img src="./ncc.jpg" alt="NCC equation" class="no-crop">
+            <p>Looking at the 2 suggested methods for alignment: <br> 
+                <b>1. L2 Norm </b>- Euclidean Distance <br>
+                <b>2. NCC</b>- Normalized Cross Correclation (displayed to the left)
+            </p>
+        </div>
+        <br>
+        <p>
+          I decided to use NCC instead of L2 Norm. L2 Norm directly compares the pixel values, but we are told 
+          that the images don't have the same brightness, hinting that we might need to use a different metric than just raw pixels. 
+          Looking at the NCC formula, we are normalizing the data, so instead we are comparing the relative intensities for each
+          glass plate (RGB). De-meaning and normalizing makes NCC less affected by the raw pixel values.
+        </p>
+
+        <br>
+
+        <p>
+          Next I determined the various attributes when running NCC.
+        </p>
+        <div style="margin-left:126px; text-align:left;">
+          <b>Window Size: </b> After trial and error, starting with half the image as the window size and 
+          kept cutting down till I found +/- 15 to be the optimal window size for scanning and a faster runtime. <br><br>
+          <b>Reference NCC: </b> The goal is to find the best match (AKA the maximum NCC output value), so originally I used 0
+          as my initial reference level, since random/no correlation was the worst case, but realized that there were also cases of 
+          negative correlation to account for. <br><br>
+          <b>Border Cropping: </b> After reducing my window size to decrease runtime, I also started cropping the images before feeding
+          them into the NCC-based alignment algorithm. 10% seemed to work the best for majority of the images, removing most of the black 
+          borders so that we can scan more of the image with the given window size. 
+
+        </div>
+        
+    </section>
+
+    <section>
+      <h2>Single-Scale Alignment</h2>
+      <h3>Low-Resolution Images Results (.JPG)</h3>
+
+      <div class="image-scroll">
+        <figure>
+          <img src="./result_data/cathedral.jpg" alt="Cathedral">
+          <figcaption>green shift: (2, 1) <br>red shift: (3, 8)</figcaption>
+        </figure>
+        <figure>
+          <img src="./result_data/monastery.jpg" alt="Monastery">
+          <figcaption>green shift: (2, -3)<br>red shift: (2, 3)</figcaption>
+        </figure>
+        <figure>
+          <img src="./result_data/tobolsk.jpg" alt="Tobolsk">
+          <figcaption>green shift: (2, 3)<br>red shift: (3, 6)</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+        <h2>Pyramid Approach</h2>
+        <p>
+          For larger images, we can no longer simply search through a [-15, 15] range nor could I go back to my original method of 
+          scanning the [10%, 10%] corner of each image. The first window size is too small to get the correct alignment, while the latter
+          will take too long to run due to the huge number of pixels in the 10% window. <br><br>
+
+          Instead, we need to implement an <b>image pyramid</b>: <br><br>
+          
+          <b>1. Pyramid Construction: </b> Recursively, (using <code>cv2.resize</code>) resize the image to half its size until it reaches a size that can be scanned 
+          fast enough and give a good heuristic/guess as a starting point before refining the x and y shifts. I hard coded 5 iterations 
+          to get to a small enough image to work with while staying within runtime limits. 
+        </p>
+
+        <div class="note" style="margin-left:126px; text-align:left;">
+          <strong>Note:</strong> 
+          At this stage, the rate at which the image is resized will be same factor by which we must scale the shifts 
+          by when resizing back up to the original resolution. Else, the alignment won't be displaced correctly. 
+        </div>        
+
+        <p>          
+          <b>2. Alignment Process: </b> Starting the lowest resolution image, we perform the NCC_align algorithm with a fixed search 
+          window. This is the initial rough estimate that we will use to narrow our search. 
+
+          <br><br>
+
+          <b>3. Refinement Process: </b> Starting with the rough estimate above, we iterate back up the image size till we reach the 
+          original size. When going up a level, we double the shift and use that as the initial x and y shifts, searching [-15, 15] pixels
+          from that initial displacement to keep fine-tuning the x/y shifts. 
+        </p>
+
+        <div class="note" style="margin-left:126px; text-align:left; background: #F0F5FA; border-left: 4px solid #4DA18F;">
+          <strong style="color: #4DA18F;"">Note:</strong> 
+          The base algorithm will still be the NCC and NCC_align from the single-scale, but we are searching in a much more efficient manner. 
+        </div>  
+    </section>
+
+    <section>
+      <h2>Multi-Scale Pyramid Alignment</h2>
+      <h3>High-Resolution Images Results (.TIF)</h3>
+      
+      <div class="image-scroll">
+        <figure>
+            <img src="./final_result/church.jpg" alt="Church">
+            <figcaption>green shift: (4, 24)<br>red shift: (-4, 56)</figcaption>
+        </figure>
+        <figure>
+            <img src="./final_result/emir.jpg" alt="Emir">
+            <figcaption>green shift: (24, 50)<br>red shift: (40, 106)</figcaption>
+        </figure>
+        <figure>
+            <img src="./final_result/harvesters.jpg" alt="Harvesters">
+            <figcaption>green shift: (16, 60)<br>red shift: (12, 122)</figcaption>
+        </figure>
+        <figure>
+            <img src="./final_result/icon.jpg" alt="Icon">
+            <figcaption>green shift: (16, 40)<br>red shift: (22, 90)</figcaption>
+        </figure>
+        <figure>
+            <img src="./final_result/italil.jpg" alt="Italil">
+            <figcaption>green shift: (20, 38)<br>red shift: (36, 76)</figcaption>
+        </figure>
+        <figure>
+            <img src="./final_result/lastochikino.jpg" alt="Lastochikino">
+            <figcaption>green shift: (-2, -4)<br>red shift: (-8, 76)</figcaption>
+        </figure>
+        <figure>
+            <img src="./final_result/lugano.jpg" alt="Lugano">
+            <figcaption>green shift: (-18, 40)<br>red shift: (-28, 92)</figcaption>
+        </figure>
+        <figure>
+            <img src="./final_result/melons.jpg" alt="Melons">
+            <figcaption>green shift: (8, 82)<br>red shift: (12, 178)</figcaption>
+        </figure>
+        <figure>
+            <img src="./final_result/self_portrait.jpg" alt="Self-Portrai">
+            <figcaption>green shift: (26, 76)<br>red shift: (36, 174)</figcaption>
+        </figure>
+        <figure>
+            <img src="./final_result/siren.jpg" alt="Siren">
+            <figcaption>green shift: (-6, 50)<br>red shift: (-24, 94)</figcaption>
+        </figure>
+        <figure>
+            <img src="./final_result/three_generations.jpg" alt="Three_generations">
+            <figcaption>green shift: (12, 52)<br>red shift: (10, 110)</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+        <h2>Issue: Intensity Inconsistency</h2>
+        <div class="side-by-side">
+          <figure>
+            <img src="./result_data/emir.jpg" alt="Emir1">
+            <figcaption>green shift: (18, 16)<br>red shift: (-284, 114)</figcaption>
+          </figure> 
+
+          <p>
+            When using the x and y shifts that I got for Emir using the regular NCC_alignment algorithm, I ended up with the image
+            displayed on the right. This error occurred because of the brightness difference between the 3 color channels. NCC expects 
+            that bright areas in one channel align with bright areas in a different channel.The three channels had differing/opposing 
+            brightness patterns, so the NCC algorithm ended up giving me a negative correlation for the correct alignment. 
+          </p>
+        </div>
+
+        <h2>Solution: Edge Mapping</h2>
+        <div class="side-by-side">
+          <figure> 
+            <img src="./final_result/emir.jpg" alt="Emir2">
+            <figcaption>green shift: (24, 50)<br>red shift: (40, 106)</figcaption>
+          </figure>
+
+          <p>
+            As such, we need to consider a different property to use NCC on. Instead of comparing pixel characteristics, we can match edges in each channel. 
+            The edges will represent the underlying structure of the image, which should stay consistent across each channel regardless of the brightness. Modeling after
+            the Sobel algorithm, I convolved the image with the sobel matrixes, before feeding the matrixes into the NCC_alignment and pyramid schemes. Applying the same 
+            algorithmic logic, but changing the feature we are correlating, I was able to get a much more accurate alignment as displayed on the right. 
+          </p>
+        </div>
+    </section>
+
+    <section>
+        <h2>More from the Prokudin-Gorskii Collection</h2>
+        <p>
+          The following are displays of additional photos chosen from the Prokudin-Gorskii collection, using
+          a mixture of the techniques described above, depending on the characterstics of the images. 
+        </p>
+        <div class="image-scroll">
+            <figure>
+              <img src="./final_result/detali_sobora.jpg" alt="Detali">
+              <figcaption>green shift: (12, 58)<br>red shift: (24, 126)</figcaption>
+            </figure>
+            <figure>
+              <img src="./final_result/monrepos_park.jpg" alt="Monrepos">
+              <figcaption>green shift: (2, 44)<br>red shift: (2, 164)</figcaption>
+            </figure>
+            <figure>
+              <img src="./final_result/locomotive.jpg" alt="Locomotive">
+              <figcaption>green shift: (30, 38)<br>red shift: (-164, 292)</figcaption>
+            </figure>
+            <figure>
+              <img src="./final_result/village_dagestan.jpg" alt="Village">
+              <figcaption>green shift: (0, 32)<br>red shift: (-2, 134)</figcaption>
+            </figure>
+        </div>
+    </section>
+
+    </main>
+
+  <footer>
+    &copy; 2025 My Portfolio
+  </footer>
+
+</body>
+</html>
