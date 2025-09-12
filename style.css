@@ -1,55 +1,197 @@
 body {
-    font-family: "Courier New", monospace;
-    background: linear-gradient(#4DA18F, #E2F2D5);
+  font-family: "Courier New", monospace;
+  margin: 0;
+  background: #f8f8f8;
+  color: #333;
 }
 
-h1 {
-    text-align: center;
-    font-weight: bold;
-    font-style: oblique;
-    background: radial-gradient(circle, rgba(50, 98, 138, 0.8), rgba(77, 161, 143, 0.0));
-    color: white;
-    padding: 40px;
+/* ===== Header ===== */
+header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  background: #fff;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+  padding: 20px 0;
+  z-index: 1000;
 }
 
-h2 {
-    text-align: center;
-    font-weight: bold;
-    background: radial-gradient(circle, rgba(242, 218, 229, 0.5), rgba(242, 218, 229, 0.0));
-    padding: 20px;
-    margin-bottom: 25px;
+header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-style: oblique;
+  color: #32628A; 
 }
+
+nav {
+  margin-top: 10px;
+}
+nav a {
+  margin: 0 20px;
+  text-decoration: none;
+  font-weight: bold;
+  color: #666;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+nav a:hover {
+  color: #4DA18F;
+  border-color: #4DA18F;
+}
+
+/* ===== Page Layout ===== */
+main {
+  padding-top: 140px;
+  max-width: 900px;
+  margin: auto;
+}
+section {
+  margin: 60px 0;
+  text-align: center;
+}
+section h2 {
+  font-weight: bold;
+  font-size: 1.4rem;
+  margin-bottom: 20px;
+  padding-bottom: 5px;        
+  border-bottom: 2px solid #E07A5F;    
+  display: inline-block; 
+}
+section p {
+  max-width: 650px;
+  margin: 0 auto 20px;
+  color: #555;
+  line-height: 1.5;
+  text-align: left;
+}
+
+/* ===== Image Styles ===== */
 
 img {
-    width: 300px;       
-    height: auto;        
-    border-width: 5px;
-    border-color:cadetblue;
-    border-style: dashed;
-    margin: 0 auto;
+  display: block;
+  margin: 20px auto;            
+  width: 300px;              
+  height: 200px;             
+  object-fit: cover;         
+  
+  border: 3px solid #e0e0e0;    
+  border-radius: 10px;    
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);  
+  
+  transition: transform 0.3s ease, border-color 0.3s ease;
 }
 
-.part1-img {
-    text-align: center;
-    margin-bottom: 50px;
+img:hover {
+  transform: scale(1.03);     
+  border-color: #4DA18F;   
 }
 
-.part1-img img {
-    display: inline-block;
-    margin: 10px;
+img.no-crop {
+  width: auto;           
+  max-width: 450px;           
+  height: auto;          
+  object-fit: contain;     
 }
 
-.part2-img {
-    text-align: center;
-    margin-bottom: 50px;
+.image-group {
+  text-align: center;
+  margin-bottom: 40px;
 }
 
-.part2-img img {
-    display: inline-block;
-    margin: 10px;
+/* ===== Footer ===== */
+footer {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #888;
+  margin: 80px 0 20px;
 }
 
-.part3-gif {
-    text-align: center;
-    margin-bottom: 50px;
+/* ===== Project ===== */
+.projects {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+}
+.card {
+  display: block; 
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 30px;
+  width: 250px;
+  text-align: center;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  border-color: #4DA18F; 
+}
+.card h3 {
+  margin-top: 0;
+  font-size: 1.2rem;
+  color: #4DA18F;
+}
+.card p {
+  color: #555;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+/* ===== Image Scroll ===== */
+.image-scroll {
+  display: flex;
+  overflow-x: auto;
+  gap: 20px;
+  padding: 10px 0;
+  scroll-snap-type: x mandatory;
+  margin: 0 auto; 
+  align-items: center;
+}
+.image-scroll figure {
+  flex: 0 0 auto;
+  text-align: center;
+  scroll-snap-align: start;
+}
+.image-scroll img {
+  width: 250px;
+}
+.image-scroll figcaption {
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* ===== Side-by-Side Display ===== */
+.side-by-side {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap; 
+}
+.side-by-side p {
+  flex: 1;
+}
+.side-by-side img {
+  width: 170px;
+}
+
+/* ===== Notes ===== */
+.note {
+  background: #FFF8F5;             
+  border-left: 4px solid #E07A5F;   
+  padding: 12px 18px;
+  margin: 20px 40px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  color: #444;                
+  line-height: 1.5;
+  max-width: 600px;    
+}
+
+.note strong {
+  color: #E07A5F;          
 }
