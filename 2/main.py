@@ -502,26 +502,6 @@ def add_blue_tint(img, amount=0.05):
 #     total.append(result)
 # save(total, "final")
 
-def get_pieced():
-
-    total = []
-    for apple, orange, m in zip(left_lap, right_lap, mask_stack):
-        result = blend(apple, orange, m)
-        total.append(result)
-
-    final = combine(total)
-    filename = f"2/test/final2.png"
-    io.imsave(filename, (final * 255).astype(np.uint8))
-
-
-    # i = 1
-    # for im in mask_stack:
-    #     im_norm = (im - im.min()) / (im.max() - im.min())
-    #     filename = f"2/mask/mask_layer_{i}.png"
-    #     io.imsave(filename, (im_norm * 255).astype(np.uint8))
-    #     i += 1
-
-# get_pieced()
 
 
 def night_beach():
