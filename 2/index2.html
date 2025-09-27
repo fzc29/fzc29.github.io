@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Project 2: Images of the Russion Empire</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+  <header>
+    <h1>Project 2: Fun with Filters and Frequencies</h1>
+    <nav>
+      <a href="../index.html">Home</a>
+    </nav>
+  </header>
+
+  <main>
+    <section>
+        <h2>OVERVIEW</h2>
+
+        <p style="text-align: center;">
+          The goal of this project is to play around with filters, 
+          images, and masks. 
+        </p>
+    
+    </section>
+
+    <section>
+      <h2>Part 1: Fun with Filters </h2>
+    </section>
+
+    <section>
+      <h3>Part 1.1: Convolutions From Scratch </h3>
+
+      <div class="side-by-side">
+        <p>
+          In this section, we explored 2D convolution, where I slid a filter across an image, multiplying
+          and summing overlapping pixel values between the image and filter to produce a new output image. 
+          Looking at the 3 chosen filters: <br><br>
+          <b>1.Box</b> -> blur the image since it averages the neighboring pixels (compared to image on the right,
+          I am using 9x9 box filter and it should be normalized) <br>
+          <b>2.D_X</b> -> the first finite difference operator that highlights any vertical edges <br>
+          <b>3.D_Y</b> -> the second finite difference operator that highlights horizontal edges 
+
+          <br><br>
+          Using a black and white picture of myself, I computed 3 output forms using the above filters and 
+          code below.
+          <br><br>
+          Here we fliped the kernel and applied the dot product by sliding the filter across the image. 
+          I chose to pad the images so that the output after convolution ends up being the same size as 
+          the initial image. Any padding added were filled with zero values. So the edges are assumed to be black
+          and will darken the resulting boundaries of the image. 
+        </p>
+        <div class="image-group">
+          <img src="./pics/box.png" alt="box filter" class="no-crop">
+          <img src="./pics/d.png" alt="derivatives" class="no-crop">
+        </div>
+
+      </div>
+
+      <div class="side-by-side">
+        <img src="./pics/time.png" alt="times" style="width:100%;">
+        <p>
+          Finally, comparing the outputs to <code>scipy.signal.convolve2d</code>, I was able 
+          to confirm the accuracy of my code. However, the runtime showed an interesting result.
+          My convolve using 4 loops ended up being faster than my 2 loop when using the finite 
+          difference operators. However, for the box filter, the 2 loops performed significantly better. 
+        </p>
+      </div>
+
+      <p style="text-align:center;">
+        ............................
+      </p>
+
+      <p> 
+        Below, I tried the same with my own picture. Starting with the two difference operator filters (D_x, D_y), 
+        then the box filter. The box filter didn't blur as much as I expected, which I found out was due to my image size 
+        being too big, so later on in the project, we will see much more pronounced blurs due to smaller image sizes. 
+      </p>
+
+      <div class="image-gallery cols-4">
+        <figure>
+          <img src="./images/me.JPG" alt="me">
+          <figcaption>ME!</figcaption>
+        </figure>
+
+        <figure>
+          <img src="./out_images/meDx_4loop.jpg" alt="d_x">
+          <figcaption>Filtered with D_x</figcaption>
+        </figure>
+
+        <figure>
+          <img src="./out_images/meDy_4loop.jpg" alt="">
+          <figcaption>Filtered with D_y</figcaption>
+        </figure>
+
+        <figure>
+          <img src="./out_images/meBox_4loop.jpg" alt="">
+          <figcaption>Filtered with Box</figcaption>
+        </figure>
+      </div>
+      
+    </section>
+
+    <div class="code-block">
+      <div class="code-header" onclick="this.nextElementSibling.classList.toggle('open')">
+        Convolution 4-loop and 2-loop <span class="code-toggle">▼</span>
+      </div>
+      <div class="code-content">
+        <pre><code>
+          def convolve_4loop(image, kernel):
+            """
+            Convolution with 4 loops 
+    
+            Input: 
+            Image = 2d numpy array (gray scale)
+            Kernel = 2d nump array (assume all odd dimensions)
+    
+            Output:
+            Convoluted kernel with image using "same" mode padding of 0's 
+            """
+            
+            m_rows, m_cols = image.shape
+            k_rows, k_cols = kernel.shape
+    
+            padding_td = (k_rows - 1) // 2
+            padding_lr = (k_cols - 1) // 2
+    
+            output = np.zeros(image.shape, dtype=np.float64)
+    
+            # flip kernel twice to reverse it 
+            kernel = np.flip(kernel)
+    
+            # pad image (same)
+            image = np.pad(image, ((padding_td, padding_td), (padding_lr, padding_lr)), mode='constant', constant_values=0)
+    
+            # convolve
+            for i in range(m_rows):
+                for j in range(m_cols):
+                    pixel = 0
+                    for row in range(k_rows):
+                        for col in range(k_cols): 
+                            pixel += image[i+row][j+col] * kernel[row][col]
+                    output[i][j] = pixel                 
+            
+            return output
+    
+        def convolve_2loop(image, kernel):
+            """
+            Same as above with only 2 loops 
+            """
+            m_rows, m_cols = image.shape
+            k_rows, k_cols = kernel.shape
+    
+            padding_td = (k_rows - 1) // 2
+            padding_lr = (k_cols - 1) // 2
+    
+            output = np.zeros(image.shape, dtype=np.float64)
+    
+            # flip kernel twice to reverse it 
+            kernel = np.flip(kernel)
+    
+            # pad image (same)
+            image = np.pad(image, ((padding_td, padding_td), (padding_lr, padding_lr)), mode='constant', constant_values=0)
+    
+            # using np.sum -> already vectorized function 
+            for i in range(m_rows):
+                for j in range(m_cols):
+                    pixel = np.sum(kernel * image[i: i + k_rows, j: j + k_cols])
+                    output[i][j] = pixel
+            return output 
+        </code></pre>
+      </div>
+    </div>
+    
+    <section>
+      <h3>Part 1.2: Finite Difference Operator </h3>
+
+      <p>
+        Following the above section, I will now convolve the cameraman photo with both of the difference operator filters.
+        Then to calculate the gradient, I will need to apply the following equation.  
+      </p>
+
+      <img src="./pics/gradient.png" alt="gradient equation" class="no-crop">
+
+      <p>
+        After computing the gradient through the combination of the D_x and D_y, filters, we are then able to create an edge mapping.
+        
+        <br><br>
+        
+        Looking at the noise, I binarized the gradient magnitude by trying out various threshold levels (alpha) to rid of the noise. 
+        After some iterations, empirically, I found an alpha in the near <b>0.2</b> to perform the best for suppressing most of the
+        noise while preserving the main components/edges of the image. 
+
+        <br><br>
+
+        Below is a sliding display of the various alphas I tried out and the corresponding output. 
+        As descibed earlier, the ones near 0.2 had the best output, while those like 0.01 had super granualar
+        details that kept a lot of the noise, and when we get to alpha = 0.4, we start losing too much detail. 
+      </p>
+
+      <div class="image-scroll">
+        <figure>
+          <img src="./camera_threshold/cameraman_0.01.jpg" alt="Cathedral">
+          <figcaption>Threshold: 0.01</figcaption>
+        </figure>
+        <figure>
+          <img src="./camera_threshold/cameraman_0.03.jpg" alt="Cathedral">
+          <figcaption>Threshold: 0.03</figcaption>
+        </figure>
+        <figure>
+          <img src="./camera_threshold/cameraman_0.05.jpg" alt="Cathedral">
+          <figcaption>Threshold: 0.05</figcaption>
+        </figure>
+        <figure>
+          <img src="./camera_threshold/cameraman_0.1.jpg" alt="Cathedral">
+          <figcaption>Threshold: 0.10</figcaption>
+        </figure>
+        <figure>
+          <img src="./camera_threshold/cameraman_0.13.jpg" alt="Cathedral">
+          <figcaption>Threshold: 0.13</figcaption>
+        </figure>
+        <figure>
+          <img src="./camera_threshold/cameraman_0.15.jpg" alt="Cathedral">
+          <figcaption>Threshold: 0.15</figcaption>
+        </figure>
+        <figure>
+          <img src="./camera_threshold/cameraman_0.17.jpg" alt="Cathedral">
+          <figcaption>Threshold: 0.17</figcaption>
+        </figure>
+        <figure>
+          <img src="./camera_threshold/cameraman_0.25.jpg" alt="Cathedral">
+          <figcaption>Threshold: 0.25</figcaption>
+        </figure>
+        <figure>
+          <img src="./camera_threshold/cameraman_0.3.jpg" alt="Cathedral">
+          <figcaption>Threshold: 0.30</figcaption>
+        </figure>
+        <figure>
+          <img src="./camera_threshold/cameraman_0.4.jpg" alt="Cathedral">
+          <figcaption>Threshold: 0.40</figcaption>
+        </figure>
+        <figure>
+          <img src="./camera_threshold/cameraman_0.55.jpg" alt="Cathedral">
+          <figcaption>Threshold: 0.55</figcaption>
+        </figure>
+        <figure>
+          <img src="./camera_threshold/cameraman_0.75.jpg" alt="Cathedral">
+          <figcaption>Threshold: 0.75</figcaption>
+        </figure>
+      </div>
+    
+      
+    </section>
+
+    <section>
+      <h3>Part 1.3: Derivative of Gaussian (DoG) Filter </h3>
+      <p>
+        As seen in the previous parts, edge detection can be affected by the noise in the image, so we can try applying
+        the Gaussian filter before using D_x and D_y. 
+
+        First, the original image using just the different operators we see the following result: 
+      </p>
+
+      <img src="./out_images/cameramanGradient.jpg" alt="d_x">
+
+      <p>
+        Next, we try convolving the different operator filters with the Gaussian before applying
+        to the image and get the following results. 
+      </p>
+
+      <div class="image-gallery cols-2">
+          <img src="./dog/dxg.jpg" alt="d_x" style="width:82%;">
+          <img src="./dog/dyg.jpg" alt="d_y" style="width:82%;">
+
+        <figure>
+          <img src="./dog/cam_dxg.jpg" alt="cam d_x" class="no-crop">
+          <figcaption>Filtered with D_x</figcaption>
+        </figure>
+
+        <figure>
+          <img src="./dog/cam_dyg.jpg" alt="cam d_y" class="no-crop">
+          <figcaption>Filtered with D_y</figcaption>
+        </figure>
+      </div>
+
+      <figure>
+        <img src="./dog/cam_dxyg_gradient.jpg" alt="" class="no-crop">
+        <figcaption>Edge image using Gaussian applied difference operator filters</figcaption>
+      </figure>
+
+      <p style="text-align:center;">
+        ............................
+      </p>
+
+      <p>
+        Since we are working with convolutions, they are commutative. As such applying the gaussian first 
+        versus the difference operators filters first should yield the same results. So, below, is I first blurred the image
+        then applied the different operators, revealing the same image as above. 
+      </p>
+
+      
+      <figure>
+        <img src="./dog/cam_dxdy_after.jpg" class="no-crop">
+        <figcaption>Apply derivatives filters on image, then use Gaussian to smooth at the end</figcaption>
+      </figure>
+       
+
+    </section>
+
+    <section>
+      <h2>Part 2: Fun with Frequencies! </h2>
+    </section>
+
+    <section>
+      <h3>Part 2.1: Image "Sharpening"</h3>
+      
+      <p>
+        In this section, we will be utilizing the Gaussian filter to blur and sharpen. Once we apply the Gaussian filter, we are left with 
+        the lower frequency portion of the image, which would in turn make the image more blurry. But we can use this to our advantage by then
+        subtracting that lower frequency from our original image, so we are only left with the high frequency portions. Having more high frequency parts
+        of the image makes it appear sharper. 
+        <br><br>
+        Below shows the progression of increasing sharpening using the <b>unsharp mask filter</b>, first on the Taj Mahal, then on a really nice matcha dessert I had recently. 
+      </p>
+
+      <p style="text-align:center;">
+        ............................
+      </p>
+
+      <h4>TAJ MAJAL</h4>
+
+      <div class="image-gallery cols-2">
+        <figure>
+          <img src="./sharpen/taj.jpg" alt="d_x">
+          <figcaption>Alpha = 0</figcaption>
+        </figure>
+        <figure>
+          <img src="./sharpen/taj_1.jpg" alt="d_x">
+          <figcaption>Alpha = 1</figcaption>
+        </figure>
+        <figure>
+          <img src="./sharpen/taj_3.jpg" alt="d_x">
+          <figcaption>Alpha = 3</figcaption>
+        </figure>
+        <figure>
+          <img src="./sharpen/taj_5.jpg" alt="d_x">
+          <figcaption>Alpha = 5</figcaption>
+        </figure>
+      </div>
+
+      <p style="text-align:center;">
+        ............................
+      </p>
+
+      <h4>MATCHA DESSERT</h4>
+
+      <div class="image-gallery cols-2">
+        <figure>
+          <img src="./my_sharpen/dessert.jpg" alt="d_x">
+          <figcaption>Alpha = 0</figcaption>
+        </figure>
+        <figure>
+          <img src="./my_sharpen/dessert_1.jpg" alt="d_x">
+          <figcaption>Alpha = 1</figcaption>
+        </figure>
+        <figure>
+          <img src="./my_sharpen/dessert_2.jpg" alt="d_x">
+          <figcaption>Alpha = 2</figcaption>
+        </figure>
+        <figure>
+          <img src="./my_sharpen/dessert_3.jpg" alt="d_x">
+          <figcaption>Alpha = 3</figcaption>
+        </figure>
+      </div>
+
+      <p style="text-align:center;">
+        ............................
+      </p>
+
+      <h4>BLUR AND RESHARPEN WITH LIQUID NITROGEN</h4>
+
+      <p>
+        Next we tried an interesting thing, where I 
+        blurred a sharp image then tried to sharpen it again.
+      </p>
+
+      <div class="image-gallery cols-3">
+        <figure>
+          <img src="./my_sharpen/shell.jpg" alt="d_x">
+          <figcaption>Original</figcaption>
+        </figure>
+        <figure>
+          <img src="./my_sharpen/shell_blur.jpg" alt="d_x">
+          <figcaption>Blurred</figcaption>
+        </figure>
+        <figure>
+          <img src="./my_sharpen/shell_blurthensharp.jpg" alt="d_x">
+          <figcaption>Re-Sharpened</figcaption>
+        </figure>
+      </div>
+
+      <p>
+        Looking at the originally sharp image compared to the re-sharpened image, I find that "sharpening"
+        doesn't truly restore the image, and adds a rather artificial feeling to the image. It does re-emphasize the edges,
+        but it only emphasizes the "surviving" mid-frequency and above information left in the image. A lot of the finer details
+        are lost. 
+      </p>
+
+    </section>
+
+
+    <section>
+      <h3>Part 2.2: Hybrid Images</h3>
+      
+      <p>
+        The goal in this part of the project is to create hybrid images. These are static 
+        images that change to the viewer due to the viewing distance. This phenomenon is possible
+        due to human's perception of frequency at different distances. High frequency data tends to dominate
+        our senses when it is present, so when you stand close to the image, then you see and focus on the image
+        displayed with high frequency, but when you are far away, low frequency dominates, since that is all
+        that can be seen. As such, by blending two images with different frequencies, you will focus or interpret different 
+        images at different distances. 
+      </p>
+
+      <p>
+        This first set displays the test images from Derek and his cat Nutmeg. 
+      </p>
+     
+      
+      <div class="image-group">
+          <img src="./hybrid_python/DerekPicture.jpg" alt="derek">
+          <img src="./hybrid_python/nutmeg.jpg" alt="nutmeg">
+          <img src="./hybrid/test2.jpg" alt="test">
+      </div>
+        
+      <p>
+        This is my mixture of a nice building I saw in China with the empire state building.
+      </p>
+
+      <div class="image-group">
+        <img src="./hybrid/1-pagoda.jpg" alt="pagoda">
+        <img src="./hybrid/1-empire.jpg" alt="empire">
+        <img src="./hybrid/1-building.jpg" alt="building" class="no-crop">
+      </div>
+
+      <p>
+        This is another mixture of Jack Frost and Giyu with both combinations :D
+      </p>
+
+      <div class="image-gallery cols-2">
+        <figure>
+          <img src="./hybrid/3-jack.jpg" alt="d_x">
+          <figcaption>Jack Frost</figcaption>
+        </figure>
+        <figure>
+          <img src="./hybrid/3-giyu.jpg" alt="d_x" style="width:102%; height:85%;">
+          <figcaption>Giyu</figcaption>
+        </figure>
+        <figure>
+          <img src="./hybrid/3-gick.jpg" alt="d_x">
+          <figcaption>Giack</figcaption>
+        </figure>
+        <figure>
+          <img src="./hybrid/3-jayu.jpg" alt="d_x">
+          <figcaption>Jayu</figcaption>
+        </figure>
+      </div>
+
+      <p>
+        For this above hybrid images, I conducted a Fourier Analysis. First looking at the sigma values, 
+        a greater sigma value means more blurring happens, so more high frequency details will be eliminated.
+        Then for a smaller sigma, I am getting a larger range of the lower frequencies, where when I subtract from 
+        the original image, then only the very top portion (higher frequencies) are left. I used some experimentation to 
+        pick out sigma values of 15 and 7. It was the best balance where I could see both clearly at their corresponding distances. 
+      </p>
+
+      <div class="image-gallery cols-2">
+        <figure>
+          <img src="./hybrid_fft/Jack.png" alt="d_x", class="no-crop">
+          <figcaption>Jack Frost</figcaption>
+        </figure>
+        <figure>
+          <img src="./hybrid_fft/Giyu.png" alt="d_x" class="no-crop">
+          <figcaption>Giyu</figcaption>
+        </figure>
+        <figure>
+          <img src="./hybrid_fft/Filtered_Jack.png" alt="d_x" class="no-crop">
+          <figcaption>Filtered Jack<br>Leaving only the high frequencies<br>Sigma = 7</figcaption>
+        </figure>
+        <figure>
+          <img src="./hybrid_fft/Filtered_Giyu.png" alt="d_x" class="no-crop">
+          <figcaption>Filtered Giyu<br>Leaving only the low frequencies<br>Sigma = 15</figcaption>
+        </figure>
+      </div>
+
+      <p>
+        I did expect the FFT representations of both my input images to be similar since they are in itself very similar
+        images, and similar art style in terms of the angle and composition of the strokes, especially for the hair portion. 
+      </p>
+
+      <img src="./pics/graph.png" class="no-crop">
+
+    </section>
+
+    <section>
+      <h3>Part 2.3: Gaussian and Laplacian Stacks</h3>
+    <p>
+      In this section, we are tasked with creating a Gaussian and Laplacian Stack. To do so, I first 
+      created a Gaussian stack by apply gaussian filters of increasing sigma values to the same initial image, 
+      and saving them all in a stack list. Then the Laplacian is found by subtracting the next Gaussian in the list
+      from the current Gaussian, and finally adding the last Gaussian directly into the Laplacian Stack. 
+    </p>
+
+    <div class="image-gallery cols-3">
+      <figure>
+        <img src="./oraple/lap_mask/apple4_0.png" alt="d_x">
+        <figcaption>Apple High Frequency</figcaption>
+      </figure>
+      <figure>
+        <img src="./oraple/lap_mask/orange4_0.png" alt="d_x">
+        <figcaption>Orange High Frequency</figcaption>
+      </figure>
+      <figure>
+        <img src="./oraple/final/final_0.png" alt="d_x">
+        <figcaption>Combined High</figcaption>
+      </figure>
+
+      <figure>
+        <img src="./oraple/lap_mask/apple4_1.png" alt="d_x">
+        <figcaption>Apple Medium Frequency</figcaption>
+      </figure>
+      <figure>
+        <img src="./oraple/lap_mask/orange4_1.png" alt="d_x">
+        <figcaption>Orange Medium Frequency</figcaption>
+      </figure>
+      <figure>
+        <img src="./oraple/final/final_1.png" alt="d_x">
+        <figcaption>Combined High</figcaption>
+      </figure>
+
+      <figure>
+        <img src="./oraple/lap_mask/apple4_4.png" alt="d_x">
+        <figcaption>Apple Low Frequency</figcaption>
+      </figure>
+      <figure>
+        <img src="./oraple/lap_mask/orange2_3.png" alt="d_x">
+        <figcaption>Orange Low Frequency</figcaption>
+      </figure>
+      <figure>
+        <img src="./oraple/final/final_4.png" alt="d_x">
+        <figcaption>Combined High</figcaption>
+      </figure>
+
+      <figure>
+        <img src="./oraple/final/left_blur.png" alt="d_x">
+        <figcaption>Apple Original Interpolation</figcaption>
+      </figure>
+      <figure>
+        <img src="./oraple/final/right_blur.png" alt="d_x">
+        <figcaption>Orange Original Interpolation</figcaption>
+      </figure>
+      <figure>
+        <img src="./oraple/final2.png" alt="d_x">
+        <figcaption>Combined Blend</figcaption>
+      </figure>
+
+
+    </div>
+
+    <h4>This is my final Orapple!</h4>
+
+    <div class="image-gallery cols-3">
+      <figure>
+        <img src="./stack/apple.jpg" alt="d_x">
+        <figcaption>Apple</figcaption>
+      </figure>
+
+      <figure>
+        <img src="./oraple/final2.png" alt="d_x">
+        <figcaption>Orapple</figcaption>
+      </figure>
+
+      <figure>
+        <img src="./stack/orange.jpg" alt="d_x">
+        <figcaption>Orange</figcaption>
+      </figure>
+    </div>
+
+    </section>
+
+
+    <section>
+      <h3>Part 2.4: Multiresolution Blending</h3>
+
+      <p>
+        This section continues from 2.3, where we explore more possibilities with blending images. 
+        To start, I created a horizontal seam instead of a vertical one, blurring a night sky with the beach. Next, is 
+        an irregular mask of a squirrel invading New York. One thing I noticed, is that with different 
+        images and masks, I had to adjust my blur amount, so both the ksize and sigma value for the gaussian filters to get 
+        the optimal blend. 
+      </p>
+
+      <h4>Night Time Beach</h4>
+
+      <div class="image-gallery cols-3">
+          <img src="./my_blend/beach.jpg" alt="d_x">
+          <img src="./my_blend_results/night_beach2.png" alt="beach blend">
+          <img src="./my_blend/night.jpg" alt="d_x">
+      </div>
+
+      <h4>Squirrel Attack</h4>
+
+      <div class="image-gallery cols-3">
+        <img src="./my_blend/squirrel.jpg" alt="d_x">
+        <img src="./my_blend_results/ny2.png" alt="beach blend">
+        <img src="./my_blend/ny.jpg" alt="d_x">
+      </div>
+      
+
+    </section>
+    
+
+    
+
+    
+    </main>
+
+  <footer>
+    &copy; 2025 My Portfolio
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,38 @@
+Convolve 4 Loop 
+4loop D_x: 0.868062 seconds
+4loop D_y: 0.977415 seconds
+4loop box: 15.958131 seconds
+
+Convolve 2 Loop 
+2loop D_x: 2.203275 seconds
+2loop D_y: 2.338651 seconds
+2loop box: 2.280005 seconds
+
+Scipy Convolve2D
+Sc D_x: 0.431527 seconds
+Sc D_y: 0.014803 seconds
+Sc box: 0.059217 seconds
+
+Camera Man photo
+4Loop Cam Dx: 0.629646 seconds
+4Loop Cam Dy: 0.693223 seconds
+
+Settings: 
+Test Image Hybrid
+Sigma 1: 15
+Sigma 2: 7
+Ksize: 15
+out = 0.75*low + 1.75*high
+
+PomBro
+Sigma 1: 19
+Sigma 2: 5
+Ksize: 15
+out = low + 2*high
+gamma = 2
+
+building
+Sigma 1: 15
+Sigma 2: 5
+Ksize: 15
+out = out = low + 1.2*high
