@@ -195,3 +195,92 @@ footer {
 .note strong {
   color: #E07A5F;          
 }
+
+
+/* ===== Collapsible Code Block ===== */
+.code-block {
+  max-width: 800px;
+  margin: 25px auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* header with toggle */
+.code-header {
+  background: #32628A;
+  color: #fff;
+  font-size: 0.9rem;
+  padding: 8px 12px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.code-header:hover {
+  background: #4DA18F;
+}
+
+.code-toggle {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+/* content */
+.code-content {
+  max-height: 0;
+  overflow: auto;
+  transition: max-height 0.3s ease;
+  background: #2e3440;
+}
+
+.code-content.open {
+  max-height: 800px; /* adjust depending on typical code length */
+}
+
+.code-content pre {
+  margin: 0;
+  padding: 16px 20px;
+  color: #d8dee9;
+  font-family: "Courier New", monospace;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+
+/* ===== Inline Image Gallery ===== */
+.image-gallery {
+  display: grid;
+  gap: 10px;
+  justify-content: center;
+}
+
+.image-gallery img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border: 3px solid #e0e0e0;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.image-gallery img:hover {
+  transform: scale(1.03);
+  border-color: #4DA18F;
+}
+
+.image-gallery.cols-2 {
+  grid-template-columns: repeat(2, 1fr); /* 3 images per row */
+}
+
+.image-gallery.cols-3 {
+  grid-template-columns: repeat(3, 1fr); /* 3 images per row */
+}
+
+.image-gallery.cols-4 {
+  grid-template-columns: repeat(4, 1fr); /* 4 per row */
+}
+
