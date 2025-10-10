@@ -1,0 +1,13 @@
+Bancroft2 vs Bancroft 4
+{"im1_name":"bancroft2","im2_name":"bancroft4","im1Points":[[2017,885]],"im2Points":[[916,793]]}
+{"im1_name":"bancroft2","im2_name":"bancroft4","im1Points":[[3085,1792]],"im2Points":[[1961,1709]]}
+{"im1_name":"bancroft2","im2_name":"bancroft4","im1Points":[[1175,598]],"im2Points":[[1708,1385]]}
+{"im1_name":"bancroft2","im2_name":"bancroft4","im1Points":[[2073,1487]],"im2Points":[[956,1525]]}
+{"im1_name":"bancroft2","im2_name":"bancroft4","im1Points":[[2415,798]],"im2Points":[[1421,775]]}
+{"im1_name":"bancroft2","im2_name":"bancroft4","im1Points":[[1665,900]],"im2Points":[[324,733]]} 
+
+
+
+"im1_name":"bancroft2","im2_name":"bancroft5",
+"im1Points":[[155,68],[419,137],[392,244],[478,244],[404,187],[544,231],[399,113],[361,254]] 
+"im2Points":[[20,126],[146,127],[96,259],[209,248],[120,181],[268,233],[122,91],[29,284]]

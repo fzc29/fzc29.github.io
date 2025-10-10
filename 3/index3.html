@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Project 3: </title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+  <header>
+    <h1>Project 3:</h1>
+    <nav>
+      <a href="../index.html">Home</a>
+    </nav>
+  </header>
+
+  <main>
+    <section>
+      <h2>Overview</h2>
+    </section>
+
+    <section>
+      <h2>PART A</h2>
+    </section>
+
+    <section>
+      <h3>A1</h3>
+      <p style="text-align: center;">
+        We are going to be stitching together images that come 
+        from the same location but different angles through warping. 
+        <br>
+        Below is an example of the 2 such images.
+      </p>
+
+      <div class="image-gallery cols-2">
+        <img src="pair_pics/bancroft2.jpg">
+        <img src="pair_pics/bancroft5.jpg">
+      </div>
+      
+    </section>
+
+    <section>
+      <h3>A2</h3>  
+      <p>
+        To match the two images, we need to be able to project
+        them into the same plane. To do so, we will be using 
+      </p>
+
+      <p class="math" style="text-align:center;">
+        p' = Hp
+      </p>
+
+      <div class="side-by-side">
+        <p>
+          By finding corresponding points on both images, we can 
+          solve for a homography matrix. 
+          <br><br>
+          Starting from the initial matrix, we are able to
+          manipulate the equations to isolation the homography
+          matrix values in terms of the reference points and the 
+          rotated points as outlined in the steps to the right. 
+          <br><br>
+          By adding more and more points, we are able to create an
+          overdetermined system, which we can then use least squares 
+          to solve.
+          <br><br>
+          Below are my initial images with the correspondences, the warped image, the blended 
+          outputs and their corresponding Homography matrixes. 
+        </p>
+
+        <img src="math.png" class="no-crop" style="width:400px; height:auto;">
+      </div>
+
+      <div class="image-gallery cols-3">
+        <img src="result/bancroft_pts1.png">
+        <img src="result/bancroft_pts2.png">
+        <img src="result/bancroft.jpg">
+      </div>
+      
+      <p>
+        [[-4.809434,  0.435058, 1574.095920],<br>
+        [-2.016017, -2.653928,  884.142516],<br>
+        [-0.009115,  0.001786,    1.000000]]
+      </p>
+
+      <div class="image-gallery cols-3">
+        <img src="result/wheeler_pts1.png">
+        <img src="result/wheeler_pts2.png">
+        <img src="result/wheeler.jpg">
+      </div>
+      
+      <p>
+        [[-5.103149,  0.191042, 1552.982810], <br>
+        [-1.701319, -2.794560,  748.533853], <br>
+        [-0.009160,  0.000884,    1.000000]]
+      </p>
+
+      <div class="image-gallery cols-3">
+        <img src="result/mc_pts1.png">
+        <img src="result/mc_pts2.png">
+        <img src="result/mc.jpg">
+      </div>
+      
+      <p>
+        [[ 2.390320,  0.531985, -278.796592],<br>
+        [ 0.030231,  2.889053, -1030.088330],<br>
+        [-0.000005,  0.002672,    1.000000]]
+      </p>
+    </section>
+
+    <section>
+      <h3>A3</h3>
+      <div class="side-by-side">
+        <p>
+          In the above, we showed the finished product after using our interpolation methods.
+          To break it down a bit more, we will show the warped results from 2 different interpolation 
+          methods. The top one is from nearest neighbors, where directly round each coordinate to 
+          their closest pixel's values. The bottom warped picture comes from a bilinear approach, where we
+          take the weighted average of the 4 corner pixel closest to our current location.
+          <br><br>
+          Bilinear took 16.735 seconds, while nearest neighbor only took 9.302 seconds. This makes sense
+          since nearest neighbor only requires two rounding operations, while we would need to calculate
+          the pixel of values of all 4 surrounding pixels and then do a weighted average for the bilinear
+          method. Since I did make my images really small, it is much harder to see the differences, but
+          when enlarged, the bilinear approach has smoother transition lines especially at edges and corners 
+          compared to nearest neighbor. However, since the difference in quality isn't huge, I decided to use
+          nearest neighbor when calculating the images above since it is much faster. 
+        </p>
+  
+        <div class="image-gallery col-1">
+          <img src="mc_nn.png" style="width:200px; height:auto;">
+          <img src="mc_bil.png" style="width:200px; height:auto;">
+        </div>
+      </div>
+
+      <p> 
+        In the above mosaics that combined my warped images to my reference image, I used the 
+        correspondence points to match the images to the same plane and then use the offset to 
+        accurate place my images at the right place to blend into 1 continuous picture (AKA mosiac). 
+        I find the average values and weigh the entire overlap to blend. For the next part, I would want
+        to improve it by using a mask or finding edges and applying a more tailored blend at the edges. 
+      </p>
+  
+      <h3>Recitification</h3>
+        <p>
+          Here we now try to take an object that is square/rectangle, and take a picture at an angle, 
+          but show the resulting image as a square/rectangle. It does make the surroundings
+          around the object we are trying to rectify look really warped, which is why my second 
+          rectify ended up with my subject being tiny. There are also effects due to the order in 
+          which I determined the points, so in the first image, it not only rectified but also rotated
+          the image somewhat to match the chosen correspondence points. 
+        </p>
+  
+      <div class="image-gallery cols-2">
+        <img src="rectification/card.jpg" style="width:400px; height:auto;">
+        <img src="rectification/card_rectified.jpg">
+        <img src="rectification/jimin.jpg" style="width:400px; height:auto;">
+        <img src="rectification/jimin_rectified.jpg">
+      </div>
+      
+    </section>
+  </main>
+
+  <footer>
+    &copy; 2025 My Portfolio
+  </footer>
+
+</body>
+</html>
