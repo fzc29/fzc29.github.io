@@ -272,8 +272,12 @@ footer {
   border-color: #4DA18F;
 }
 
+.image-gallery.cols-1 {
+  grid-template-columns: repeat(1, 1fr); /* 1 images per row */
+}
+
 .image-gallery.cols-2 {
-  grid-template-columns: repeat(2, 1fr); /* 3 images per row */
+  grid-template-columns: repeat(2, 1fr); /* 2 images per row */
 }
 
 .image-gallery.cols-3 {
@@ -283,4 +287,21 @@ footer {
 .image-gallery.cols-4 {
   grid-template-columns: repeat(4, 1fr); /* 4 per row */
 }
+
+.math {
+  font-family: "Times New Roman", Cambria, serif;
+  font-style: italic;
+  font-size: 1.2em;
+  letter-spacing: 0.5px;
+}
+
+.math sup, .math sub {
+  font-size: 0.7em;
+  font-style: normal;
+  vertical-align: baseline;
+  position: relative;
+}
+
+.math sup { top: -0.4em; }
+.math sub { top: 0.2em; }
 
