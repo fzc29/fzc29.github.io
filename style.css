@@ -305,3 +305,14 @@ footer {
 .math sup { top: -0.4em; }
 .math sub { top: 0.2em; }
 
+
+.equation {
+  background: #ffffff;
+  border-left: 4px solid #007acc;
+  padding: 10px;
+  font-size: 1.1em;
+  margin: 10px 0;
+}
+.equation mjx-container {
+  overflow-x: auto; 
+}

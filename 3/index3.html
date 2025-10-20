@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <title>Project 3: </title>
   <link rel="stylesheet" href="../style.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
 
@@ -29,119 +31,195 @@
         We are going to be stitching together images that come 
         from the same location but different angles through warping. 
         <br>
-        Below is an example of the 2 such images.
+        Below are examples of these pair images. Each of the pairs are taken standing
+        at the same location, with the only shift being a rotation centered at the camera. 
+        There are both images that rotate left to right as well as up and down. 
       </p>
 
       <div class="image-gallery cols-2">
         <img src="pair_pics/bancroft2.jpg">
         <img src="pair_pics/bancroft5.jpg">
+
+        <img src="pair_pics/evan1.jpg">
+        <img src="pair_pics/evan2.jpg">
+
+        <img src="pair_pics/grime1.jpg">
+        <img src="pair_pics/grime2.jpg">
+
+        <img src="pair_pics/mc2.jpg">
+        <img src="pair_pics/mc4.jpg">
+
+        <img src="pair_pics/wheeler_2.jpg">
+        <img src="pair_pics/wheeler_6.jpg">
       </div>
       
     </section>
 
     <section>
-      <h3>A2</h3>  
+      <h3>A2</h3>
       <p>
-        To match the two images, we need to be able to project
-        them into the same plane. To do so, we will be using 
+        By finding corresponding points on both images, we can 
+        solve for a homography matrix.
+        <br><br>
+        Starting from the initial matrix, we can manipulate the equations to isolate
+        the homography values in terms of the reference points and transformed points.
+        The steps are shown below in greater detail.
       </p>
-
-      <p class="math" style="text-align:center;">
-        p' = Hp
-      </p>
-
-      <div class="side-by-side">
-        <p>
-          By finding corresponding points on both images, we can 
-          solve for a homography matrix. 
-          <br><br>
-          Starting from the initial matrix, we are able to
-          manipulate the equations to isolation the homography
-          matrix values in terms of the reference points and the 
-          rotated points as outlined in the steps to the right. 
-          <br><br>
-          By adding more and more points, we are able to create an
-          overdetermined system, which we can then use least squares 
-          to solve.
-          <br><br>
-          Below are my initial images with the correspondences, the warped image, the blended 
-          outputs and their corresponding Homography matrixes. 
+      
+      <div class="equation">
+        $$ 
+        P' =
+        \begin{bmatrix} a \\ b \\ w \end{bmatrix} =
+        \begin{bmatrix}
+        h_{11} & h_{12} & h_{13} \\
+        h_{21} & h_{22} & h_{23} \\
+        h_{31} & h_{32} & h_{33}
+        \end{bmatrix}
+        \begin{bmatrix} x \\ y \\ 1 \end{bmatrix}
+        $$
+        <br><br>
+        $$
+        \begin{aligned}
+        a &= h_{11}x + h_{12}y + h_{13} \\
+        b &= h_{21}x + h_{22}y + h_{23} \\
+        w &= h_{31}x + h_{32}y + h_{33}
+        \end{aligned}
+        $$
+        <br><br>
+        <p style="font-size:0.9em;">
+          To convert back to 2D Cartesian coordinates, divide \(a\) and \(b\) by \(w\):
         </p>
-
-        <img src="math.png" class="no-crop" style="width:400px; height:auto;">
+        $$
+        x' = \frac{a}{w} = 
+        \frac{h_{11}x + h_{12}y + h_{13}}
+            {h_{31}x + h_{32}y + h_{33}}
+        $$
+        $$
+        y' = \frac{b}{w} = 
+        \frac{h_{21}x + h_{22}y + h_{23}}
+            {h_{31}x + h_{32}y + h_{33}}
+        $$
+        <br><br>
+        <p style="font-size:0.9em;">
+          Through some algebraic manipulation, we can isolate x' and y' in terms of the H and 
+          the known points. 
+        </p>
+        <br> 
+        $$
+        x' = h_{11}x + h_{12}y + h_{13} - h_{31}x'x - h_{32}x'y - h_{33}x'
+        $$
+        $$
+        y' = h_{21}x + h_{22}y + h_{23} - h_{31}y'x - h_{32}y'y - h_{33}y'
+        $$
+        <br>
+        For each point:
+        $$
+        \begin{bmatrix}
+        x & y & 1 & 0 & 0 & 0 & -x'x & -x'y \\
+        0 & 0 & 0 & x & y & 1 & -y'x & -y'y
+        \end{bmatrix}
+        \begin{bmatrix}
+        h_{11} \\ h_{12} \\ h_{13} \\ h_{21} \\ h_{22} \\ h_{23} \\ h_{31} \\ h_{32}
+        \end{bmatrix}
+        =
+        \begin{bmatrix}
+        x' \\ y'
+        \end{bmatrix}
+        $$
       </div>
 
-      <div class="image-gallery cols-3">
-        <img src="result/bancroft_pts1.png">
-        <img src="result/bancroft_pts2.png">
-        <img src="result/bancroft.jpg">
-      </div>
-      
       <p>
-        [[-4.809434,  0.435058, 1574.095920],<br>
-        [-2.016017, -2.653928,  884.142516],<br>
-        [-0.009115,  0.001786,    1.000000]]
-      </p>
-
-      <div class="image-gallery cols-3">
-        <img src="result/wheeler_pts1.png">
-        <img src="result/wheeler_pts2.png">
-        <img src="result/wheeler.jpg">
-      </div>
-      
-      <p>
-        [[-5.103149,  0.191042, 1552.982810], <br>
-        [-1.701319, -2.794560,  748.533853], <br>
-        [-0.009160,  0.000884,    1.000000]]
-      </p>
-
-      <div class="image-gallery cols-3">
-        <img src="result/mc_pts1.png">
-        <img src="result/mc_pts2.png">
-        <img src="result/mc.jpg">
-      </div>
-      
-      <p>
-        [[ 2.390320,  0.531985, -278.796592],<br>
-        [ 0.030231,  2.889053, -1030.088330],<br>
-        [-0.000005,  0.002672,    1.000000]]
+        We have effectively changed the matrix to a format that makes the H matrix our unknown 
+        and the goal to solve for. <br><br>
+        As we populating the matrix with more point pairs, we will add more to the 
+        number of rows and form an overdetermined system, where we can then use least 
+        squares to solve, and find H. 
       </p>
     </section>
 
     <section>
-      <h3>A3</h3>
-      <div class="side-by-side">
-        <p>
-          In the above, we showed the finished product after using our interpolation methods.
-          To break it down a bit more, we will show the warped results from 2 different interpolation 
-          methods. The top one is from nearest neighbors, where directly round each coordinate to 
-          their closest pixel's values. The bottom warped picture comes from a bilinear approach, where we
-          take the weighted average of the 4 corner pixel closest to our current location.
-          <br><br>
-          Bilinear took 16.735 seconds, while nearest neighbor only took 9.302 seconds. This makes sense
-          since nearest neighbor only requires two rounding operations, while we would need to calculate
-          the pixel of values of all 4 surrounding pixels and then do a weighted average for the bilinear
-          method. Since I did make my images really small, it is much harder to see the differences, but
-          when enlarged, the bilinear approach has smoother transition lines especially at edges and corners 
-          compared to nearest neighbor. However, since the difference in quality isn't huge, I decided to use
-          nearest neighbor when calculating the images above since it is much faster. 
-        </p>
-  
-        <div class="image-gallery col-1">
-          <img src="mc_nn.png" style="width:200px; height:auto;">
-          <img src="mc_bil.png" style="width:200px; height:auto;">
-        </div>
+      <p>
+        I used the student tool recommended to get the correspondence points. Then I used my 
+        <code>compute</code> function to calculate the homography matrix. Below are displays of 
+        each pair of images, with the correspondence locations and the resulting H matrix. 
+      </p>
+
+      <h4>BANCROFT</h4>
+      <div class="image-gallery cols-2">
+        <img src="finalized/part1/display_pts/bancroft2.jpg">
+        <img src="finalized/part1/display_pts/bancroft5.jpg">
+      </div>
+      <div class="equation">
+        $$
+        \begin{bmatrix}
+        -2.39310712 & 0.812079199 & 1353.59152 \\
+        -1.00167088 & 0.906161173 & 343.842542 \\
+        -0.00205932774 & 0.000541750173 & 1.00000000
+        \end{bmatrix}
+        $$
       </div>
 
-      <p> 
-        In the above mosaics that combined my warped images to my reference image, I used the 
-        correspondence points to match the images to the same plane and then use the offset to 
-        accurate place my images at the right place to blend into 1 continuous picture (AKA mosiac). 
-        I find the average values and weigh the entire overlap to blend. For the next part, I would want
-        to improve it by using a mask or finding edges and applying a more tailored blend at the edges. 
-      </p>
-  
-      <h3>Recitification</h3>
+      <h4>EVANS</h4>
+      <div class="image-gallery cols-2">
+        <img src="finalized/part1/display_pts/evan1.jpg">
+        <img src="finalized/part1/display_pts/evan2.jpg">
+      </div>
+      <div class="equation">
+        $$
+        \begin{bmatrix}
+        0.624849653 & 0.00607935333 & 209.546513 \\
+        -0.159760066 & 0.846483008 & 112.007144 \\
+        -0.000507667283 & -0.0000501770591 & 1.00000000
+        \end{bmatrix}
+        $$
+      </div>
+
+      <h4>GRIMES</h4>
+      <div class="image-gallery cols-2">
+        <img src="finalized/part1/display_pts/grime1.jpg">
+        <img src="finalized/part1/display_pts/grime2.jpg">
+      </div>
+      <div class="equation">
+        $$
+        \begin{bmatrix}
+        0.646614446 & 0.0735611714 & 167.262136 \\
+        -0.157013749 & 0.928155410 & 110.107503 \\
+        -0.000551237104 & 0.000208308164 & 1.00000000
+        \end{bmatrix}
+        $$
+      </div>
+
+      <h4>MC</h4>
+      <div class="image-gallery cols-2">
+        <img src="finalized/part1/display_pts/mc2.jpg">
+        <img src="finalized/part1/display_pts/mc4.jpg">
+      </div>
+      <div class="equation">
+        $$
+        \begin{bmatrix}
+        0.814309500 & -0.464063614 & 324.437937 \\
+        -0.00353877149 & 0.325684076 & 356.412916 \\
+        0.00000916866179 & -0.000955916503 & 1.00000000
+        \end{bmatrix}
+        $$
+      </div>
+
+      <h4>WHEELER</h4>
+      <div class="image-gallery cols-2">
+        <img src="finalized/part1/display_pts/wh2.jpg">
+        <img src="finalized/part1/display_pts/wh6.jpg">
+      </div>
+      <div class="equation">
+        $$
+        \begin{bmatrix}
+        0.214351146 & 0.0533363818 & 432.030469 \\
+        -0.857256345 & 0.824421955 & 599.403369 \\
+        -0.00106626495 & -0.00000632764153 & 1.00000000
+        \end{bmatrix}
+        $$
+      </div>
+
+      <h3>Rectification</h3>
         <p>
           Here we now try to take an object that is square/rectangle, and take a picture at an angle, 
           but show the resulting image as a square/rectangle. It does make the surroundings
@@ -152,12 +230,233 @@
         </p>
   
       <div class="image-gallery cols-2">
-        <img src="rectification/card.jpg" style="width:400px; height:auto;">
-        <img src="rectification/card_rectified.jpg">
-        <img src="rectification/jimin.jpg" style="width:400px; height:auto;">
-        <img src="rectification/jimin_rectified.jpg">
+        <img src="finalized/part1/card_points.jpg">
+        <img src="finalized/part1/jimin_points.jpg" >
+        <img src="finalized/part1/rec_card.jpg">
+        <img src="finalized/part1/rec_jimin.jpg">
       </div>
+    </section>
+
+    <section>
+      <h3>A3</h3>
+      <div class="side-by-side">
+        <p>
+          Now, we will try to warp one image to match the other. 
+          To break it down a bit more, we will show the warped results from 2 different interpolation 
+          methods. The left warped images are from nearest neighbors, where directly round each coordinate to 
+          their closest neighbor's pixel values. The right warped picture comes from a bilinear approach, where we
+          take the weighted average of the 4 corner pixel closest to our current location.
+          <br><br>
+          Consistent for all the pictures, bilinear took longer than nearest neighbor. This makes sense
+          since nearest neighbor only requires two rounding operations, while we would need to calculate
+          the pixel of values of all 4 surrounding pixels and then do a weighted average for the bilinear
+          method. Since I did make my images really small, it is much harder to see the differences, but
+          when enlarged, the bilinear approach has smoother transition lines especially at edges and corners 
+          compared to nearest neighbor. However, since the difference in quality and speed isn't huge, I decided to use
+          nearest neighbor when calculating the images since if I use bigger images, the time may scale. 
+        </p>
+  
+        <div class="image-gallery cols-3">
+          <figure>
+            <img src="finalized/part1/warp/e_nn.jpg">
+            <figcaption>Time: 3.5306 s</figcaption>
+          </figure>
+          
+          <figure>
+            <img src="pair_pics/evan2.jpg">
+            <figcaption>EVANS</figcaption>
+          </figure>
+          
+          <figure>
+            <img src="finalized/part1/warp/e_bil.jpg">
+            <figcaption>Time: 5.5500 s</figcaption>
+          </figure>
+        </div>
+
+        <div class="image-gallery cols-3">
+          <figure>
+            <img src="finalized/part1/warp/g_nn.jpg">
+            <figcaption>Time: 3.4255 s</figcaption>
+          </figure>
+          
+          <figure>
+            <img src="pair_pics/grime2.jpg">
+            <figcaption>EVANS</figcaption>
+          </figure>
+          
+          <figure>
+            <img src="finalized/part1/warp/g_bil.jpg">
+            <figcaption>Time: 5.3068 s</figcaption>
+          </figure>
+        </div>
+
+        <div class="image-gallery cols-3">
+          <figure>
+            <img src="finalized/part1/warp/m_nn.jpg">
+            <figcaption>Time: 9.9824 s</figcaption>
+          </figure>
+          
+          <figure>
+            <img src="pair_pics/mc4.jpg">
+            <figcaption>EVANS</figcaption>
+          </figure>
+          
+          <figure>
+            <img src="finalized/part1/warp/m_bil.jpg">
+            <figcaption>Time: 15.1401 s</figcaption>
+          </figure>
+        </div>
+      </div>     
+    </section>
+
+    <section>
+      <h2>A4</h2>
+
+      <p>
+        Now, we will take the warped images and combine them with the other image to create a 
+        panoramic image. The challenge here is to calculate the resultant canvas size and find the right
+        offset to map both images onto that canvas and then blend the edges. 
+      </p>
+
+      <div class="image-gallery cols-3">
+        <img src="pair_pics/grime1.jpg">
+        <img src="finalized/part1/hom_grime.jpg">
+        <img src="pair_pics/grime2.jpg">
+      </div>
+
+      <div class="image-gallery cols-3">
+        <img src="pair_pics/bancroft2.jpg">
+        <img src="finalized/part1/hom_bancroft.jpg">
+        <img src="pair_pics/bancroft5.jpg">
+      </div>
+
+      <div class="image-gallery cols-3">
+        <img src="pair_pics/evan1.jpg">
+        <img src="finalized/part1/hom_evan.jpg">
+        <img src="pair_pics/evan2.jpg">
+      </div>
+
+      <div class="image-gallery cols-3">
+        <img src="pair_pics/mc2.jpg">
+        <img src="finalized/part1/hom_mc.jpg">
+        <img src="pair_pics/mc4.jpg">
+      </div>
+
+      <div class="image-gallery cols-3">
+        <img src="pair_pics/wheeler_2.jpg">
+        <img src="finalized/part1/hom_wheeler.jpg">
+        <img src="pair_pics/wheeler_6.jpg">
+      </div>
+
+      <p> 
+        In the above mosaics that combined my warped images to my reference image, I used the 
+        correspondence points to match the images to the same plane and then use the offset to 
+        accurate place my images at the right place to blend into 1 continuous picture (AKA mosiac). 
+        I find the average values and weigh the entire overlap to blend. For the next part, I would want
+        to improve it by using a mask or finding edges and applying a more tailored blend at the edges. 
+      </p> 
+    </section>
+
+    <section>
+      <h2>PART B</h2>
+      <p>
+        Now, we will experience with methods of auto-stitching instead of manually finding the 
+        correspondence points like in Part A. 
+      </p>
+    </section>
+
+    <section>
+      <h3>B1</h3>
+      <p>
+        First, we will look at the Harris Corners, which is a way to quickly identify key points that we
+        were manually looking earlier - <b>corners</b>. These corners are essentially points in the image 
+        where the intensity changes significantly in all directions. The Harris Corner Detector achieves this by 
+        analyzing the gradient of the image and calculating a response value for each pixel, which indicates 
+        the likelihood of that pixel being a corner. 
+        <br>
+        Next, we will apply Adaptive Non-Maximal Suppression (ANMS) to filter out the Harris corners and 
+        retain only the most significant ones. This helps in reducing the number of points while keeping 
+        the most relevant ones for further processing.
+        <br>
+      </p>
+
+      <div class="image-gallery cols-2">
+        <figure>
+          <img src="finalized/part2/harris/wh_harris.jpg">
+          <figcaption>Harris Corners</figcaption>
+        </figure>
+        <figure>
+          <img src="finalized/part2/harris/wh_anms.jpg">
+          <figcaption>with ANMS</figcaption>
+        </figure>
+      </div>
+
+
+    </section>
+
+    <section>
+      <h3>B2</h3>
+      <p>
+        Taking the same image above (wheeler), we now apply a feature descriptor function. 
       
+        Taking the same image above (wheeler), we now apply a feature descriptor function.
+        The descriptor function extracts unique and identifiable features from the image by analyzing 
+        small regions around each detected corner. More specifically, we 40x40 window around each corner, 
+        resizes them to 8x8, and normalizes the values to ensure consistency across features. 
+        This process helps in creating a compact representation of the image's key points, making it 
+        easier to compare and match features between images.
+        <br><br>
+        The image below displays 10 examples of these descriptors extracted from an image of Evans, 
+        showcasing the distinct patterns captured by the function.
+      </p>
+
+      <div class="image-gallery cols-1">
+        <img src="finalized/part2/feature/evan_descriptor.png"
+      </div>
+    </section>
+
+    <section>
+      <h3>B3</h3>
+      <p>
+        The image below illustrates the feature matching process. The lines connecting the two images 
+        represent the matched features, where each line corresponds to a pair of points that have been 
+        identified as similar based on their descriptors. The matching process uses the L2 norm to measure 
+        the distance between feature descriptors, and Lowe's ratio test is applied to ensure that the matches 
+        are robust by selecting only those matches where the best match is significantly better than the 
+        second-best match.
+        <br><br>
+        When matching, I also ensured that I am matching from both directions to ensure the correct set of 
+        mapping exist. 
+      </p>
+
+      <div class="image-gallery cols-1">
+        <img src="finalized/part2/feature/matched_evan.jpg">
+      </div>
+    </section>
+
+    <section>
+      <h3>B4</h3>
+      <p>
+        Finally, we implement RANSAC, a method to filter out outliers among the matched features. 
+        RANSAC works by iteratively selecting a random subset of matches to compute a homography matrix (H) 
+        and then evaluating how well this matrix aligns the remaining matches. The process repeats and we want to 
+        keep the H with the highest number of inliers (matches that fit well). This ensures that the final set of 
+        matches is highly reliable, which is then used the calculate the actual H that we use for warping our images.
+        <br><br>
+        Below is a side-by-side comparison of the resulting warps. The leftside displays the manual warps computed
+        from earlier, and the right side shows the RANSAC automatically stiched panoramic images. 
+      </p>
+
+      <div class="image-gallery cols-2">
+        <img src="finalized/part1/hom_evan.jpg">
+        <img src="finalized/part2/ransac/hom_evan.jpg">
+
+        <img src="finalized/part1/hom_grime.jpg">
+        <img src="finalized/part2/ransac/hom_grime.jpg">
+
+        <img src="finalized/part1/hom_stan.jpg">
+        <img src="finalized/part2/ransac/hom_stan.jpg">
+      </div>
     </section>
   </main>
 
