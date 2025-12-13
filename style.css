@@ -288,6 +288,10 @@ footer {
   grid-template-columns: repeat(4, 1fr); /* 4 per row */
 }
 
+.image-gallery.cols-5 {
+  grid-template-columns: repeat(5, 1fr); /* 5 per row */
+}
+
 .math {
   font-family: "Times New Roman", Cambria, serif;
   font-style: italic;
